@@ -1,0 +1,12 @@
+__pycache__/
+.ipynb_checkpoints/
+*.egg-info/
+out.log
+*.p
+*.tex
+*.ilp
+./mailopt/Data/*
+./mailopt/Results/*
+./Data/*.png
+./Data/*.txt
+./Data/*.json
