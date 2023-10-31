@@ -6,8 +6,14 @@ Contains data on the toy example network.
 DOES NOT contain data on the full mail centre examples from the paper (due to commercial sensitivity).
 
 ## To install
-1. Navigate (in terminal) to directory containing "mailoptDemo/setup.py" file.
-2. In a terminal, run "python setup.py".
+Requires:
+* Python (version 3.9-3.13) - see https://www.python.org/downloads/ for installation advice
+* Poetry - see https://python-poetry.org/docs/ for installation advice
+
+To install
+1. Download the github repository
+2. In a terminal, navigate to the folder containing the pyproject.toml file
+3. Run "poetry install mailoptdemo" in the terminal
 
 ## Usage
 For an example of how to use, please see the "mailoptDemo/scripts/Demo_Script.py" file.

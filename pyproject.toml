@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "mailoptdemo"
+version = "0.1.0"
+description = ""
+authors = ["hthorburn93 <h.thorburn@lancaster.ac.uk>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9, <3.13"
+numpy = "^1.26.1"
+networkx = "^3.2.1"
+pandas = "^2.1.2"
+matplotlib = "^3.8.0"
+gurobipy = "^10.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
