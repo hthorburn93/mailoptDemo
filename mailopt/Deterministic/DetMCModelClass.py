@@ -480,7 +480,7 @@ class DetMCModel:
             if o!=Objs[-1]:
                 #If we want the interim results, check the model and save these now
                 if OutputInterim==True:
-                    Outputs[o]=self.extractSolution2()
+                    Outputs[o]=self.extractSolution()
                     if Check==True:
                         CheckModel(self)
                 #Get LHS (objective from first function)
@@ -493,7 +493,7 @@ class DetMCModel:
                 self.Model.update()
             #If it is the last objective, pull out solution and check
             else:
-              Outputs[o]=self.extractSolution2()
+              Outputs[o]=self.extractSolution()
               if Check==True:
                   CheckModel(self)
         return Outputs
@@ -515,7 +515,7 @@ class DetMCModel:
             if o!=Objs[-1]:
                 #If we want the interim results, check the model and save these now
                 if OutputInterim==True:
-                    Outputs[o]=self.extractSolution2()
+                    Outputs[o]=self.extractSolution()
                     if Check==True:
                         CheckModel(self)
                 #Get LHS (objective from first function)
@@ -528,7 +528,7 @@ class DetMCModel:
                 self.Model.update()
             #If it is the last objective, pull out solution and check
             else:
-              Outputs[o]=self.extractSolution2()
+              Outputs[o]=self.extractSolution()
               if Check==True:
                   CheckModel(self)
         return Outputs
@@ -551,7 +551,7 @@ class DetMCModel:
         Obj1Exp=self.create_objective(Objs[0])
         self.Model.setObjective(Obj1Exp)
         self.Solve(Threads=Threads,TimeLim=TimeLim)
-        Outputs[Objs[0]]=self.extractSolution2()
+        Outputs[Objs[0]]=self.extractSolution()
 # =============================================================================
 #         #Constrain the first objective
 #         NewConsLHS=Obj1Exp
@@ -567,7 +567,7 @@ class DetMCModel:
 #         #Solve
 #         self.Solve(Threads=Threads,TimeLim=TimeLim)
 #         #Extract the new solution
-#         Outputs[Objs[1]]=self.extractSolution2()
+#         Outputs[Objs[1]]=self.extractSolution()
 #         #return the outputs
 # =============================================================================
         return Outputs
@@ -591,7 +591,7 @@ class DetMCModel:
             if o!=Objs[-1]:
                 #If we want the interim results, check the model and save these now
                 if OutputInterim==True:
-                    Outputs[o]=self.extractSolution2()
+                    Outputs[o]=self.extractSolution()
                     if Check==True:
                         CheckModel(self)
                 #Get LHS (objective from first function)
@@ -606,7 +606,7 @@ class DetMCModel:
                 self.Model.update()
             #If it is the last objective, pull out solution and check
             else:
-              Outputs[o]=self.extractSolution2()
+              Outputs[o]=self.extractSolution()
               if Check==True:
                   CheckModel(self)
         return Outputs
@@ -620,7 +620,7 @@ class DetMCModel:
 #             ObjExp=self.create_objective(o)
 #             self.Model.setObjective(ObjExp)
 #             self.Solve(Threads=Threads,TimeLim=TimeLim)
-#             Sol=self.extractSolution2()
+#             Sol=self.extractSolution()
 #             #Get LHS (objective from first function)
 #             NewConsLHS=ObjExp
 #             #Get RHS (Obj val from model)
@@ -648,7 +648,7 @@ class DetMCModel:
         self.set_objective('MinChange')
         self.Solve(Threads=Threads,TimeLim=TimeLim)
 # =============================================================================
-#         Sol2=self.extractSolution2()
+#         Sol2=self.extractSolution()
 #         Outputs['MinChangeRelax']=Sol2.Y
 #         return Outputs
 # =============================================================================
@@ -702,7 +702,7 @@ class DetMCModel:
                         self.Y[w,t].ub=self.Y[w,t].x
                     else:
                         assert self.Y[w,t]==0
-                #SolTemp=self.extractSolution2()
+                #SolTemp=self.extractSolution()
             else:
                 assert sum([self.Y[w,t] for t in ShiftTimes])==0
                 print("No workers in work area",w)
@@ -741,11 +741,11 @@ class DetMCModel:
                             self.Y[w,t].ub=self.Y[w,t].x
                         else:
                             assert self.Y[w,t]==0
-                    #SolTemp=self.extractSolution2()
+                    #SolTemp=self.extractSolution()
                 else:
                     assert sum([self.Y[w,t] for t in ShiftTimes])==0
                     print("No workers is work area",w)
-            Sol=self.extractSolution2()
+            Sol=self.extractSolution()
             if PenExp.size()>1:
                 PenEval=PenExp.getValue()
             else:
@@ -956,29 +956,8 @@ class DetMCModel:
 #                     self.Model.addConstr(GSumExp>=-(self.Y[w,t1]-self.Y[w,t2]))
 # =============================================================================
         
-    def extractSolution(self):
-        #Check the model is either infeasible or solved, or reached a user-set limit
-        assert self.Model.status in [2,3,7,8,9]
-        print("Model status is ",self.Model.status)
-        if self.Model.status!=3:
-            XVars=dict(self.Model.getAttr('x',self.X))
-            YVars=dict(self.Model.getAttr('x',self.Y))
-            #Extract the G vars
-            #Firstly, are there no G vars (for min cost objective)
-            if self.G==None:
-                return XVars, YVars
-            else:
-                #Secondly, are there multiple G vars (for most objectives)
-                if type(self.G)==type(self.Y):
-                    GVars=dict(self.Model.getAttr('x',self.G))
-                #Thirdly, is there only one G objective (for )
-                else:
-                    GVars=self.G.x
-                return XVars, YVars, GVars
-        else:
-            print("Model not solved. Model Status is ", self.Model.status)
             
-    def extractSolution2(self):
+    def extractSolution(self):
         #Check the model is either infeasible or solved, or reached a user-set limit
         assert self.Model.status in [2,3,7,8,9]
         print("Model status is ",self.Model.status)
@@ -1015,6 +994,7 @@ class DetModelSolution():
         self.WorkPlanDF=pd.DataFrame([[self.Y[w,t] for w in self.WAList] for t in DetModel.Data.Times])
         self.DG2 = DetModel.Data.DG2
         self.Times=DetModel.Data.Times
+        self.Shifts=DetModel.Data.Shifts
         self.CommodsList = DetModel.Data.Comods
         T=nx.get_node_attributes(self.DG2,'Time')
         W=nx.get_node_attributes(self.DG2,'WS')
@@ -1060,6 +1040,13 @@ class DetModelSolution():
         TotalChange=0
         for w in self.WAList:
             TotalChange+=sum(np.abs([self.C[w]*(self.Y[w,t]-self.Y[w,t-1]) for t in self.Times[1:]]))
+        return TotalChange
+    
+    def CountChangesShift(self):
+        TotalChange=0
+        ShiftStartTimes=[Time[0] for Time in self.Shifts.values()]
+        for w in self.WAList:
+            TotalChange+=sum(np.abs([self.C[w]*(self.Y[w,t]-self.Y[w,t-1]) for t in self.Times[1:] if t not in ShiftStartTimes]))
         return TotalChange
     
     def FindMax(self):
