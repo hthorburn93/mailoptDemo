@@ -220,8 +220,6 @@ def CreateSmallNetworkInstance(AddDelays=True):
                  '2cSCMLet':[1,6,7],
                  '2cManLet':[1,3,6,7],
                  }
-    print("TEST HERE")
-    print(AcceptPaths)
     UWSLen=len(UWSNames)-1
     WANameNumber=dict(zip(UWSNames[:UWSLen],range(1,len(UWSNames))))
     WANumberName=dict(zip(range(1,len(UWSNames)),UWSNames[:UWSLen]))

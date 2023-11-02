@@ -8,7 +8,7 @@ Test script to run model code on a small instance, and check all the required co
 
 """
 
-#FIrstly, import all required pacakges
+#Firstly, import all required pacakges
 import networkx as nx
 from mailopt.NetworkBuilding.CreateSmallInstance import CreateSmallNetworkInstance
 from mailopt.Deterministic.DetMCModelClass import DetMCModel
@@ -16,6 +16,11 @@ from mailopt.Deterministic.DetMCModelClass import DetMCModel
 #Create the small network
 SmallNetwork=CreateSmallNetworkInstance()
 #print details on the small network
+print("Given network instance consists of ")
+print(len(SmallNetwork.MS)," WAs")
+print(len(SmallNetwork.Comods)," streams")
+print(len(SmallNetwork.Tethered)," tethered pairs")
+print(len(SmallNetwork.IDDicts)," ID streams")
 #Number of WAs
 #Number of streams
 #Number of tethered WAs/ID streams
@@ -78,23 +83,27 @@ for (SecondWA, FirstWA, Shift) in SmallNetwork.Tethered:
 ##Show that the ID mapping works
 WAs=nx.get_node_attributes(SmallNetworkModel.Data.DG2,name='WS')
 
-OriginWA='2cImp'#WANumber is 4
-Dest1WA='2cManLS'#WANumber is 6
-Dest2WA='Imp'#WANumbers is 7
-OriginWANodes=[n for (n,atts) in SmallNetworkModel.Data.DG2.nodes.items() if atts['WS']==4]
-Dest1WANodes=[n for (n,atts) in SmallNetworkModel.Data.DG2.nodes.items() if atts['WS']==6]
-Dest2WANodes=[n for (n,atts) in SmallNetworkModel.Data.DG2.nodes.items() if atts['WS']==7]
+for o in SmallNetwork.IDDicts.values():
+    OriginWA=o['Origin']
+    Dests=o['Destinations']
+    Ratios=o['Ratios']
+    print("ID stream going from ",OriginWA,", with destinations:")
+    print(Dests)
+    print("and respective ratios")
+    print(Ratios)
+    assert len(Dests)==len(Ratios)
+    OriginWANumber=SmallNetwork.WANameNumber[OriginWA]
+    OriginWANodes=[n for (n,atts) in SmallNetworkModel.Data.DG2.nodes.items() if atts['WS']==OriginWANumber]
+    InOriginWAEdges=[(u,v) for ((u,v),atts) in SmallNetworkModel.Data.DG2.edges.items() if v in OriginWANodes and WAs[u]!=OriginWANumber]
+    InOriginTotalFlow=sum([SmallNetworkSol.X[u,v,k] for (u,v) in InOriginWAEdges for k in SmallNetworkModel.Data.Comods if (u,v,k) in SmallNetworkSol.X])
+    print("Total flow into ",OriginWA," is ",InOriginTotalFlow)
+    for i in range(len(Dests)):
+        print("Ratio going to ",Dests[i],", is ",Ratios[i])
+        DestWANumber=SmallNetwork.WANameNumber[Dests[i]]
+        DestWANodes=[n for (n,atts) in SmallNetworkModel.Data.DG2.nodes.items() if atts['WS']==DestWANumber]
+        OutEdges=[(u,v) for (u,v) in SmallNetworkModel.Data.DG2.edges() if u in OriginWANodes and v in DestWANodes]
+        OutFlow1=[SmallNetworkSol.X[u,v,k] for (u,v) in OutEdges for k in SmallNetworkModel.Data.Comods if (u,v,k) in SmallNetworkSol.X]
+        print("Flow into ", Dests[i]," is ", sum(OutFlow1))
 
-#Get the correct edges for the flows in and the flows out
-InOriginWAEdges=[(u,v) for ((u,v),atts) in SmallNetworkModel.Data.DG2.edges.items() if v in OriginWANodes and WAs[u]!=4]
-OutEdges1=[(u,v) for (u,v) in SmallNetworkModel.Data.DG2.edges() if u in OriginWANodes and v in Dest1WANodes]
-OutEdges2=[(u,v) for (u,v) in SmallNetworkModel.Data.DG2.edges() if u in OriginWANodes and v in Dest2WANodes]
 
-#Get the flows along these edges, and ensure the indirect mapping is correct
-InOriginTotalFlow=sum([SmallNetworkSol.X[u,v,k] for (u,v) in InOriginWAEdges for k in SmallNetworkModel.Data.Comods if (u,v,k) in SmallNetworkSol.X])
-OutFlow1=[SmallNetworkSol.X[u,v,k] for (u,v) in OutEdges1 for k in SmallNetworkModel.Data.Comods if (u,v,k) in SmallNetworkSol.X]
-OutFlow2=[SmallNetworkSol.X[u,v,k] for (u,v) in OutEdges2 for k in SmallNetworkModel.Data.Comods if (u,v,k) in SmallNetworkSol.X]
-print("Total flow into ",OriginWA," is ",InOriginTotalFlow)
-print("FLow into ", Dest1WA," is ", sum(OutFlow1))
-print("Flow into ", Dest2WA," is ", sum(OutFlow2))
 

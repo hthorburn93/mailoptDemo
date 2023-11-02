@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["hthorburn93 <h.thorburn@lancaster.ac.uk>"]
 readme = "README.md"
+packages = [{ include = "mailopt" }]
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.13"
