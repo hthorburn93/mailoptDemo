@@ -69,17 +69,17 @@ def CreateSmallNetworkInstance(AddDelays=True):
     
     #UWS=['Source', 1, 2, 4, 3, 5,  6, 7, 'Completion', 'Sink']
     UWS=[1, 2, 4, 3, 5,  6, 7, 'Completion']
-    UWSNames=['ImpA','1cImp','ManSeg','2cImp','1cManLS','2cManLS','Inw','Completion']
+    UWSNames=['WA_1','WA_2','WA_3','WA_4','WA_5','WA_6','WA_7','Completion']
     
     
     ##Set list of comodities
     
-    Commods=['1cMechLet',
-            '1cSCMLet',
-            '1cManLet',
-            '2cMechLet',
-            '2cSCMLet',
-            '2cManLet',]
+    Commods=['Commod_1',
+            'Commod_2',
+            'Commod_3',
+            'Commod_4',
+            'Commod_5',
+            'Commod_5',]
     
     ## Define the necessary data
     # Comodities
@@ -142,39 +142,39 @@ def CreateSmallNetworkInstance(AddDelays=True):
             elif "Source" in str(WS[i[0]]) or "Sink" in str(WS[i[1]]):
                 ComCap[i]={j:GRB.INFINITY for j in Commods}#[GRB.INFINITY for j in range(len(Commods))]
                 TotalCap[i]=GRB.INFINITY
-            #Else, set arcs coming from ImpA
+            #Else, set arcs coming from WA_1
             elif WS[i[0]]==1:
-                #If it's going to 1cImp, it's a mechanically sorted arc for 1cMechLet only
+                #If it's going to WA_2, it's a mechanically sorted arc for Commod_1 only
                 if WS[i[1]]==2:
                     ComCap[i]=dict(zip(Commods,[K3, 0, 0, 0, 0, 0]))
                     TotalCap[i]=K4
-                #If it's going to 1cManLS, it's a mechanically sorted arc for 1cSCM only
+                #If it's going to WA_5, it's a mechanically sorted arc for 1cSCM only
                 elif WS[i[1]]==5:
                     ComCap[i]=dict(zip(Commods,[0, K3, 0, 0, 0, 0]))
                     TotalCap[i]=K4
-                #If it's going to ManSeg, it's a mechanically sorted arc for 1cManLet and 2cManLet
+                #If it's going to WA_3, it's a mechanically sorted arc for Commod_3 and Commod_5
                 elif WS[i[1]]==3:
                     ComCap[i]=dict(zip(Commods,[0, 0, K3, 0, 0, K3]))
                     TotalCap[i]=K4
-                #If it's going to 2cManLS, it's a mechanically sorted arc for 2cSCM only
+                #If it's going to WA_6, it's a mechanically sorted arc for 2cSCM only
                 elif WS[i[1]]==6:
                     ComCap[i]=dict(zip(Commods,[0, 0, 0, 0, K3, 0]))
                     TotalCap[i]=K4
-                #If it's going to 2cImp, it's a mechanically sorted arc for 2cMechLet only
+                #If it's going to WA_4, it's a mechanically sorted arc for Commod_4 only
                 elif WS[i[1]]==4:
                     ComCap[i]=dict(zip(Commods,[0, 0, 0, K3, 0, 0, 0]))
                     TotalCap[i]=K4
-            #Else, set arc going from 1cImp. Only arc goes to 1cManLS - mechanically sorted arc for 1cMechLet only
+            #Else, set arc going from WA_2. Only arc goes to WA_5 - mechanically sorted arc for Commod_1 only
             elif WS[i[0]]==2:
                 ComCap[i]=dict(zip(Commods,[K3, 0, 0, 0, 0, 0]))
                 TotalCap[i]=K4
-            #Else set arcs going from ManSeg
+            #Else set arcs going from WA_3
             elif WS[i[0]]==3:
-                #If it's going to 1cManLS, it's a manually sorted arc for 1cManLet only
+                #If it's going to WA_5, it's a manually sorted arc for Commod_3 only
                 if WS[i[1]]==5:
                     ComCap[i]=dict(zip(Commods,[0, 0, K1, 0, 0, 0]))
                     TotalCap[i]=K2
-                #If it's going to 2cManLS, it's a manually sorted arc for 2cManLet only
+                #If it's going to WA_6, it's a manually sorted arc for Commod_5 only
                 elif WS[i[1]]==6:
                     ComCap[i]=dict(zip(Commods,[0, 0, 0, 0, 0, K1]))
                     TotalCap[i]=K2
@@ -182,19 +182,19 @@ def CreateSmallNetworkInstance(AddDelays=True):
                 else:
                     print("Error: Where's this arc going?")
                     print((WS[i[0]],WS[i[1]]))
-            #Else, set arc going from 2cImp. Only arc goes to 1cManLS - mechanically sorted arc for 2cMechLet only
+            #Else, set arc going from WA_4. Only arc goes to WA_5 - mechanically sorted arc for Commod_4 only
             elif WS[i[0]]==4:
                 ComCap[i]=dict(zip(Commods,[0, 0, 0, K3, 0, 0]))
                 TotalCap[i]=K4
-            #Else, set arc going from 1cManLS. This is a manual arc for all 1c letters
+            #Else, set arc going from WA_5. This is a manual arc for all 1c letters
             elif WS[i[0]]==5:
                 ComCap[i]=dict(zip(Commods,[K1, K1, K2, 0, 0, 0]))
                 TotalCap[i]=K2
-            #Else, set arc going from 2cManLS. This is a manual arc for all 2c letters
+            #Else, set arc going from WA_6. This is a manual arc for all 2c letters
             elif WS[i[0]]==6:
                 ComCap[i]=dict(zip(Commods,[0, 0, 0, K1, K1, K2]))
                 TotalCap[i]=K2
-            #Else, set arc going from Inw. This is a manual arc for all letters.
+            #Else, set arc going from WA_7. This is a manual arc for all letters.
             elif WS[i[0]]==7:
                 ComCap[i]={j:K1 for j in Commods}#[K1 for j in range(len(Commods))]
                 TotalCap[i]=K2
@@ -213,12 +213,12 @@ def CreateSmallNetworkInstance(AddDelays=True):
                     if (WS[orig],WS[dest]) not in AcceptPaths[k]:
                         if WS[dest]!='Sink':
                             AcceptPaths[k].append((WS[orig],WS[dest]))
-    StreamPaths={'1cMechLet':[1,2,5,7],
-                 '1cSCMLet':[1,5,7],
-                 '1cManLet':[1,3,5,7],
-                 '2cMechLet':[1,4,6,7],
-                 '2cSCMLet':[1,6,7],
-                 '2cManLet':[1,3,6,7],
+    StreamPaths={'Commod_1':[1,2,5,7],
+                 'Commod_2':[1,5,7],
+                 'Commod_3':[1,3,5,7],
+                 'Commod_4':[1,4,6,7],
+                 'Commod_5':[1,6,7],
+                 'Commod_5':[1,3,6,7],
                  }
     UWSLen=len(UWSNames)-1
     WANameNumber=dict(zip(UWSNames[:UWSLen],range(1,len(UWSNames))))
@@ -234,12 +234,12 @@ def CreateSmallNetworkInstance(AddDelays=True):
             "Late":range(3,6),
             "Night":range(6,9)}
     Tethered=[(6,3,"Night")]
-    IDDicts={"2cImp":{"Origin":"2cImp",
-                      "Destinations":["2cManLS","Inw"],
+    IDDicts={"WA_4":{"Origin":"WA_4",
+                      "Destinations":["WA_6","WA_7"],
                       "Ratios":[0.05,0.95]}}
     #Add the Indirect stream paths to the AcceptPaths object
     #First, get all commodities going through the origin WA
-    IDCommods=['2cMechLet']
+    IDCommods=['Commod_4']
     for k in IDCommods:
         AcceptPaths[k].append((4,7))
     PD=ProblemData(DG2,Times,ComCap,WorkPlan,WorkerCaps,Commods,UWS,C,NodeCaps,DG,StreamPaths=StreamPaths,
