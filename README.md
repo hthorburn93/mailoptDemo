@@ -13,14 +13,21 @@ Requires:
 To install
 1. Download/clone the github repository
 2. In a terminal, navigate to the folder containing the pyproject.toml file
-3. Run "poetry install" in the terminal
+3. Run `poetry install` in the terminal
 
 ## Usage
-For an example of how to use, please see the "mailoptDemo/scripts/Demo_Script.py" file.
+To use the package, users need to be in a virtual environment. Poetry will automatically create one and install it there, but if you prefer, you can create one yourself, and install the package in there
+If you want to use your own venv, you need to activate it, then run poetry install (as above)
+
+If you want to use poetry's venv, you can simply run `poetry shell` to start the environment
+
+For an example of how to use, please see the "mailoptDemo/scripts/Demo_Script.py" file. To run this file either
+1. Run `poetry shell` to enter the venv, then run  `python scripts/Demo_Script.py`
+2. Run `poetry run python scripts/Demo_Script.py` (this doesn't leave the venv change after running script)
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+See License file
 
 ## Citation
 Thorburn, H., Sachs, A., Fairbrother, J., Boylan, J.E., (2023) "A time-expanded network design model for staff allocation in mail centres" _IN REVIEW_
