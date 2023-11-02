@@ -11,9 +11,9 @@ Requires:
 * Poetry - see https://python-poetry.org/docs/ for installation advice
 
 To install
-1. Download the github repository
+1. Download/clone the github repository
 2. In a terminal, navigate to the folder containing the pyproject.toml file
-3. Run "poetry install mailoptdemo" in the terminal
+3. Run "poetry install" in the terminal
 
 ## Usage
 For an example of how to use, please see the "mailoptDemo/scripts/Demo_Script.py" file.
