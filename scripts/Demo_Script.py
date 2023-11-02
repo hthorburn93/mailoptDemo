@@ -31,18 +31,23 @@ print(len(SmallNetwork.IDDicts)," ID streams")
 #Dictionary specifying types of variables in model. Values are gurobi codes
 VTypes = {
     "X": "C", #Flow variables
-    "Y": "C", #Worker number variables
+    "Y": "I", #Worker number variables
 }
 
 SmallNetworkModel=DetMCModel(SmallNetwork,VTypes=VTypes,DelayFlowPen=1000000)
 
 #Set the objectives and optimise
+#Note - check is for
 SmallNetworkModel.Solve_Lex_Objective_Manual(['DelayMailCost','MinMaxWorkerTimeShift'],Check=False)
 
 #Extract the solution
-SmallNetworkSol=SmallNetworkModel.extractSolution2()
+SmallNetworkSol=SmallNetworkModel.extractSolution()
 
 #Print basic solution information here
+print("Model solved, with a status of ",SmallNetworkModel.Model.status)
+print("Max workers is ",SmallNetworkSol.FindMax())
+print("Changes is ",SmallNetworkSol.CountChangesShift())
+print("Total delayed items is ",SmallNetworkSol.TotalArcCost(Penalty=1))
 #Demo functions from DetModelSolutionClass
 #Maybe even plot
 
